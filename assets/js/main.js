@@ -834,3 +834,91 @@ function() {
     } (window || {});
     return e
 });
+_gsScope = "undefined" != typeof module && module.exports && "undefined" != typeof global ? global: this || window; (_gsScope._gsQueue || (_gsScope._gsQueue = [])).push(function() {
+    "use strict";
+    var e = (_gsScope.document || {}).documentElement,
+    t = _gsScope,
+    i = function(i, r) {
+        var n = "x" === r ? "Width": "Height",
+        s = "scroll" + n,
+        a = "client" + n,
+        o = document.body;
+        return i === t || i === e || i === o ? Math.max(e[s], o[s]) - (t["inner" + n] || e[a] || o[a]) : i[s] - i["offset" + n]
+    },
+    r = function(i, r) {
+        var n = "scroll" + ("x" === r ? "Left": "Top");
+        return i === t && (null != i.pageXOffset ? n = "page" + r.toUpperCase() + "Offset": i = null != e[n] ? e: document.body),
+        function() {
+            return i[n]
+        }
+    },
+    n = function(i, n) {
+        var s = function(e) {
+            return "string" == typeof e && (e = TweenLite.selector(e)),
+            e.length && e !== t && e[0] && e[0].style && !e.nodeType && (e = e[0]),
+            e === t || e.nodeType && e.style ? e: null
+        } (i).getBoundingClientRect(),
+        a = !n || n === t || n === document.body,
+        o = (a ? e: n).getBoundingClientRect(),
+        l = {
+            x: s.left - o.left,
+            y: s.top - o.top
+        };
+        return ! a && n && (l.x += r(n, "x")(), l.y += r(n, "y")()),
+        l
+    },
+    s = function(e, t, r) {
+        var s = typeof e;
+        return isNaN(e) ? "number" === s || "string" === s && "=" === e.charAt(1) ? e: "max" === e ? i(t, r) : Math.min(i(t, r), n(e, t)[r]) : parseFloat(e)
+    },
+    a = _gsScope._gsDefine.plugin({
+        propName: "scrollTo",
+        API: 2,
+        global: !0,
+        version: "1.9.0",
+        init: function(e, i, n) {
+            return this._wdw = e === t,
+            this._target = e,
+            this._tween = n,
+            "object" != typeof i ? "string" == typeof(i = {
+                y: i
+            }).y && "max" !== i.y && "=" !== i.y.charAt(1) && (i.x = i.y) : i.nodeType && (i = {
+                y: i,
+                x: i
+            }),
+            this.vars = i,
+            this._autoKill = !1 !== i.autoKill,
+            this.getX = r(e, "x"),
+            this.getY = r(e, "y"),
+            this.x = this.xPrev = this.getX(),
+            this.y = this.yPrev = this.getY(),
+            null != i.x ? (this._addTween(this, "x", this.x, s(i.x, e, "x") - (i.offsetX || 0), "scrollTo_x", !0), this._overwriteProps.push("scrollTo_x")) : this.skipX = !0,
+            null != i.y ? (this._addTween(this, "y", this.y, s(i.y, e, "y") - (i.offsetY || 0), "scrollTo_y", !0), this._overwriteProps.push("scrollTo_y")) : this.skipY = !0,
+            !0
+        },
+        set: function(e) {
+            this._super.setRatio.call(this, e);
+            var r = this._wdw || !this.skipX ? this.getX() : this.xPrev,
+            n = this._wdw || !this.skipY ? this.getY() : this.yPrev,
+            s = n - this.yPrev,
+            o = r - this.xPrev,
+            l = a.autoKillThreshold;
+            this.x < 0 && (this.x = 0),
+            this.y < 0 && (this.y = 0),
+            this._autoKill && (!this.skipX && (o > l || o < -l) && r < i(this._target, "x") && (this.skipX = !0), !this.skipY && (s > l || s < -l) && n < i(this._target, "y") && (this.skipY = !0), this.skipX && this.skipY && (this._tween.kill(), this.vars.onAutoKill && this.vars.onAutoKill.apply(this.vars.onAutoKillScope || this._tween, this.vars.onAutoKillParams || []))),
+            this._wdw ? t.scrollTo(this.skipX ? r: this.x, this.skipY ? n: this.y) : (this.skipY || (this._target.scrollTop = this.y), this.skipX || (this._target.scrollLeft = this.x)),
+            this.xPrev = this.x,
+            this.yPrev = this.y
+        }
+    }),
+    o = a.prototype;
+    a.max = i,
+    a.getOffset = n,
+    a.buildGetter = r,
+    a.autoKillThreshold = 7,
+    o._kill = function(e) {
+        return e.scrollTo_x && (this.skipX = !0),
+        e.scrollTo_y && (this.skipY = !0),
+        this._super._kill.call(this, e)
+    }
+}),
