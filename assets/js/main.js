@@ -922,3 +922,11 @@ _gsScope = "undefined" != typeof module && module.exports && "undefined" != type
         this._super._kill.call(this, e)
     }
 }),
+_gsScope._gsDefine && _gsScope._gsQueue.pop()(),
+function(e) {
+    "use strict";
+    var t = function() {
+        return (_gsScope.GreenSockGlobals || _gsScope).ScrollToPlugin
+    };
+    "undefined" != typeof module && module.exports ? (require("../TweenLite.js"), module.exports = t()) : "function" == typeof define && define.amd && define(["TweenLite"], t)
+} ();
